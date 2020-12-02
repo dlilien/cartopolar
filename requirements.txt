@@ -1,0 +1,6 @@
+matplotlib>=2.0.0
+numpy>=1.14.0
+scipy>=0.19.1
+cartopy>=0.15
+pycpt
+rasterio
