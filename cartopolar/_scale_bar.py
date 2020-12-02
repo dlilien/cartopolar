@@ -129,7 +129,7 @@ def _point_along_line(ax, start, distance, angle=0, tol=0.01):
 
 def scale_bar(ax, location, length, metres_per_unit=1000, unit_name='km',
               tol=0.01, angle=0, color='black', linewidth=3, text_offset=0.005,
-              ha='center', va='bottom', plot_kwargs=None, text_kwargs=None,
+              ha='center', va='bottom', plot_kwargs=None, text_kwargs=None, zorder=10000,
               **kwargs):
     """Add a scale bar to CartoPy axes.
 
@@ -161,9 +161,9 @@ def scale_bar(ax, location, length, metres_per_unit=1000, unit_name='km',
     if text_kwargs is None:
         text_kwargs = {}
 
-    plot_kwargs = {'linewidth': linewidth, 'color': color, **plot_kwargs,
+    plot_kwargs = {'linewidth': linewidth, 'color': color, 'zorder': zorder, **plot_kwargs,
                    **kwargs}
-    text_kwargs = {'ha': ha, 'va': va, 'rotation': angle, 'color': color,
+    text_kwargs = {'ha': ha, 'va': va, 'rotation': angle, 'color': color, 'zorder': zorder,
                    **text_kwargs, **kwargs}
 
     # Convert all units and types.

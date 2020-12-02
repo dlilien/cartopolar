@@ -15,6 +15,7 @@ from cartopy.mpl.geoaxes import GeoAxes
 import rasterio
 from rasterio.plot import show
 import matplotlib
+import geopandas as gp
 
 
 class DeluxGeoAxes(GeoAxes):
@@ -24,6 +25,10 @@ class DeluxGeoAxes(GeoAxes):
     _ylocs = None
     _x_inline = None
     _y_inline = None
+
+    def plot_pt_shpfile(self, fn, *args, **kwargs):
+        data = gp.read_file(fn)
+        data.plot(ax=self, *args, **kwargs)
 
     def show_tif(self, tif_fn, *args, **kwargs):
         tif = rasterio.open(tif_fn)
