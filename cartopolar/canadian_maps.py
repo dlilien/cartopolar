@@ -13,28 +13,21 @@ Setup plots as desired for Greenland.
 import numpy as np
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
-from .cartopy_overrides import NPS
+from .cartopy_overrides import NPS, CAN
 import shapely.geometry as sgeom
 
-GREENLAND_EXTENT = (-660050.000, 859950.000, -3380050.000, -630050.000)
-GREENLAND_ASP = (GREENLAND_EXTENT[1] - GREENLAND_EXTENT[0]) / (GREENLAND_EXTENT[3] - GREENLAND_EXTENT[2])
-CORE_ONSET_EXTENT = (70000, 325000, -1900000, -1480000)
-CORE_ONSET_ASP = (CORE_ONSET_EXTENT[1] - CORE_ONSET_EXTENT[0]) / (CORE_ONSET_EXTENT[3] - CORE_ONSET_EXTENT[2])
-UPSTREAM_EXTENT = (0, 450000, -1900000, -1300000)
-UPSTREAM_ASP = (UPSTREAM_EXTENT[1] - UPSTREAM_EXTENT[0]) / (UPSTREAM_EXTENT[3] - UPSTREAM_EXTENT[2])
-
-HT_EXTENT = (62000, 128000, -840000, -755000)
-HT_ASP = (HT_EXTENT[1] - HT_EXTENT[0]) / (HT_EXTENT[3] - HT_EXTENT[2])
-
-RADARSAT_FN = '/home/dlilien/sw/cartopolar/cartopolar/data/1000mCbandmultiyear.tif'
+AXEL_HEIBERG_EXTENT = (-948000.000, -700000.000, -935000.000, -600000.000)
+MUELLER_NPS_EXTENT = (-830000.000, -750000.000, -800000.000, -710000.000)
+MUELLER_EXTENT = (500000.0, 560000.0, 8830000.0, 8900000.0)
 
 
-def greenland(ax=None, fig_kwargs=None):
+
+def heiberg(ax=None, fig_kwargs=None):
     if fig_kwargs is None:
         fig_kwargs = {}
     if ax is None:
         _, ax = plt.subplots(**fig_kwargs, subplot_kw={'projection': NPS()})
-    ax.set_extent(GREENLAND_EXTENT, ccrs.epsg(3413))
+    ax.set_extent(AXEL_HEIBERG_EXTENT, ccrs.epsg(3413))
     ax._xlocs = [-75, -60, -45, -30, -15]
     ax._ylocs = [60, 65, 70, 75, 80]
     ax._y_inline = False
@@ -42,46 +35,33 @@ def greenland(ax=None, fig_kwargs=None):
     return ax
 
 
-def core_onset(ax=None, fig_kwargs=None):
+def mueller_nps(ax=None, fig_kwargs=None):
     if fig_kwargs is None:
         fig_kwargs = {}
     if ax is None:
         _, ax = plt.subplots(**fig_kwargs, subplot_kw={'projection': NPS()})
-    ax.set_extent(CORE_ONSET_EXTENT, ccrs.epsg(3413))
-    ax._xlocs = [-45, -40, -35, -30]
-    ax._ylocs = np.arange(70, 81)
+    ax.set_extent(MUELLER_NPS_EXTENT, ccrs.epsg(3413))
+    ax._xlocs = np.arange(-180, 180, 1.0)
+    ax._ylocs = np.arange(-180, 180, 1.0 / 3.0)
     ax._y_inline = False
     ax._x_inline = False
     return ax
 
 
-def upstream(ax=None, fig_kwargs=None):
+def mueller_map(ax=None, fig_kwargs=None):
     if fig_kwargs is None:
         fig_kwargs = {}
     if ax is None:
-        _, ax = plt.subplots(**fig_kwargs, subplot_kw={'projection': NPS()})
-    ax.set_extent(UPSTREAM_EXTENT, ccrs.epsg(3413))
-    ax._xlocs = [-60, -55, -50, -45, -40, -35, -30]
-    ax._ylocs = np.arange(65, 85)
+        _, ax = plt.subplots(**fig_kwargs, subplot_kw={'projection': CAN()})
+    ax.set_extent(MUELLER_EXTENT, CAN())
+    ax._xlocs = np.arange(-180, 180, 1.0)
+    ax._ylocs = np.arange(-180, 180, 1.0 / 3.0)
     ax._y_inline = False
     ax._x_inline = False
     return ax
 
 
-def hans_tausen(ax=None, fig_kwargs=None):
-    if fig_kwargs is None:
-        fig_kwargs = {}
-    if ax is None:
-        _, ax = plt.subplots(**fig_kwargs, subplot_kw={'projection': NPS()})
-    ax.set_extent(HT_EXTENT, ccrs.epsg(3413))
-    ax._xlocs = np.arange(-180, 180)
-    ax._ylocs = np.arange(65, 85, 0.5)
-    ax._y_inline = False
-    ax._x_inline = False
-    return ax
-
-
-def greenland_inset(fig, x0, y0, width=None, height=None, ax_units=None, background=True, grid=True, outline_ax=None, bbox_kwargs={'facecolor': 'none', 'edgecolor': 'blue', 'linewidth': 2}):
+def canadian_inset(fig, x0, y0, width=None, height=None, ax_units=None, background=True, grid=True, outline_ax=None, bbox_kwargs={'facecolor': 'none', 'edgecolor': 'blue', 'linewidth': 2}):
     """Make an inset.
 
     x0: Float
