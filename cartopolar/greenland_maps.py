@@ -26,6 +26,9 @@ UPSTREAM_ASP = (UPSTREAM_EXTENT[1] - UPSTREAM_EXTENT[0]) / (UPSTREAM_EXTENT[3] -
 HT_EXTENT = (62000, 128000, -840000, -755000)
 HT_ASP = (HT_EXTENT[1] - HT_EXTENT[0]) / (HT_EXTENT[3] - HT_EXTENT[2])
 
+HT_SMALL_EXTENT = (90000, 128000, -800000, -755000)
+HT_SMALL_ASP = (HT_SMALL_EXTENT[1] - HT_SMALL_EXTENT[0]) / (HT_SMALL_EXTENT[3] - HT_SMALL_EXTENT[2])
+
 RADARSAT_FN = '/home/dlilien/sw/cartopolar/cartopolar/data/1000mCbandmultiyear.tif'
 
 
@@ -34,7 +37,7 @@ def greenland(ax=None, fig_kwargs=None):
         fig_kwargs = {}
     if ax is None:
         _, ax = plt.subplots(**fig_kwargs, subplot_kw={'projection': NPS()})
-    ax.set_extent(GREENLAND_EXTENT, ccrs.epsg(3413))
+    ax.set_extent(GREENLAND_EXTENT, NPS())
     ax._xlocs = [-75, -60, -45, -30, -15]
     ax._ylocs = [60, 65, 70, 75, 80]
     ax._y_inline = False
@@ -74,6 +77,19 @@ def hans_tausen(ax=None, fig_kwargs=None):
     if ax is None:
         _, ax = plt.subplots(**fig_kwargs, subplot_kw={'projection': NPS()})
     ax.set_extent(HT_EXTENT, ccrs.epsg(3413))
+    ax._xlocs = np.arange(-180, 180)
+    ax._ylocs = np.arange(65, 85, 0.5)
+    ax._y_inline = False
+    ax._x_inline = False
+    return ax
+
+
+def hans_tausen_small(ax=None, fig_kwargs=None):
+    if fig_kwargs is None:
+        fig_kwargs = {}
+    if ax is None:
+        _, ax = plt.subplots(**fig_kwargs, subplot_kw={'projection': NPS()})
+    ax.set_extent(HT_SMALL_EXTENT, ccrs.epsg(3413))
     ax._xlocs = np.arange(-180, 180)
     ax._ylocs = np.arange(65, 85, 0.5)
     ax._y_inline = False

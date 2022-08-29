@@ -9,9 +9,10 @@
 """
 """
 
-from .cartopy_overrides import NPS, SPS
+from .cartopy_overrides import NPS, SPS, CAN
 nps = NPS()
 sps = SPS()
+can = CAN()
 from ._scale_bar import scale_bar
 
 from .colormaps import GMT_globe

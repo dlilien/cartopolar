@@ -122,6 +122,9 @@ def _point_along_line(ax, start, distance, angle=0, tol=0.01):
         # start azimuth, end azimuth]].
         return geodesic.inverse(a_phys, b_phys).base[0, 0]
 
+    def dist_func_simple(a, b):
+        return np.sqrt((a[0] - b[0]) ** 2.0 + (a[1] - b[1]) ** 2.0)
+
     end = _upper_bound(start, direction, distance, dist_func)
 
     return _distance_along_line(start, end, distance, dist_func, tol)
@@ -130,7 +133,7 @@ def _point_along_line(ax, start, distance, angle=0, tol=0.01):
 def scale_bar(ax, location, length, metres_per_unit=1000, unit_name='km',
               tol=0.01, angle=0, color='black', linewidth=3, text_offset=0.005,
               ha='center', va='bottom', plot_kwargs=None, text_kwargs=None, zorder=10000,
-              **kwargs):
+              zebra=False, **kwargs):
     """Add a scale bar to CartoPy axes.
 
     For angles between 0 and 90 the text and line may be plotted at
@@ -161,7 +164,7 @@ def scale_bar(ax, location, length, metres_per_unit=1000, unit_name='km',
     if text_kwargs is None:
         text_kwargs = {}
 
-    plot_kwargs = {'linewidth': linewidth, 'color': color, 'zorder': zorder, **plot_kwargs,
+    plot_kwargs = {'zorder': zorder, **plot_kwargs,
                    **kwargs}
     text_kwargs = {'ha': ha, 'va': va, 'rotation': angle, 'color': color, 'zorder': zorder,
                    **text_kwargs, **kwargs}
@@ -178,13 +181,45 @@ def scale_bar(ax, location, length, metres_per_unit=1000, unit_name='km',
     # Coordinates are currently in axes coordinates, so use transAxes to
     # put into data coordinates. *zip(a, b) produces a list of x-coords,
     # then a list of y-coords.
-    ax.plot(*zip(location, end), transform=ax.transAxes, **plot_kwargs)
+    if zebra:
+        if text_offset > 0:
+            text_offset = -0.02
+        midpoint = (location + end) / 2
+        offset = text_offset * np.array([-np.sin(angle_rad), np.cos(angle_rad)])
+        ax.plot(*zip(location, location + 0.75 * offset), transform=ax.transAxes, linewidth=0.5, color='k', **plot_kwargs)
+        ax.plot(*zip(end, end + 0.75 * offset), transform=ax.transAxes, linewidth=0.5, color='k', **plot_kwargs)
+        ax.plot(*zip(midpoint, midpoint + 0.75 * offset), transform=ax.transAxes, linewidth=0.5, color='k', **plot_kwargs)
+        ax.fill([location[0], end[0], end[0], location[0], location[0]], [location[1], end[1], end[1] - offset[1] / 2, location[1] - offset[1] / 2, location[1]], transform=ax.transAxes, ec='k', fc='k', linewidth=0.5, **plot_kwargs)
+        ax.fill([location[0], midpoint[0], midpoint[0], location[0], location[0]], [location[1], end[1], end[1] - offset[1] / 2, location[1] - offset[1] / 2, location[1]], transform=ax.transAxes, ec='k', fc='w', linewidth=0.5, **plot_kwargs)
 
-    # Push text away from bar in the perpendicular direction.
-    midpoint = (location + end) / 2
-    offset = text_offset * np.array([-np.sin(angle_rad), np.cos(angle_rad)])
-    text_location = midpoint + offset
+        # 'rotation' keyword argument is in text_kwargs.
+        text_kwargs['va'] = 'bottom'
+        text_location = midpoint - offset / 2.0
+        ax.text(*text_location, f"{unit_name}", rotation_mode='anchor',
+                transform=ax.transAxes, **text_kwargs)
 
-    # 'rotation' keyword argument is in text_kwargs.
-    ax.text(*text_location, f"{length} {unit_name}", rotation_mode='anchor',
-            transform=ax.transAxes, **text_kwargs)
+        text_location = midpoint + offset
+        text_kwargs['va'] = 'top'
+        ax.text(*text_location, f"{length // 2}", rotation_mode='anchor',
+                transform=ax.transAxes, **text_kwargs)
+
+        text_location = location + offset
+        ax.text(*text_location, "0", rotation_mode='anchor',
+                transform=ax.transAxes, **text_kwargs)
+
+        text_location = end + offset
+        ax.text(*text_location, f"{length}", rotation_mode='anchor',
+                transform=ax.transAxes, **text_kwargs)
+    else:
+        plot_kwargs['linewidth'] = linewidth
+        plot_kwargs['color'] = color
+        ax.plot(*zip(location, end), transform=ax.transAxes, **plot_kwargs)
+
+        # Push text away from bar in the perpendicular direction.
+        midpoint = (location + end) / 2
+        offset = text_offset * np.array([-np.sin(angle_rad), np.cos(angle_rad)])
+        text_location = midpoint + offset
+
+        # 'rotation' keyword argument is in text_kwargs.
+        ax.text(*text_location, f"{length} {unit_name}", rotation_mode='anchor',
+                transform=ax.transAxes, **text_kwargs)

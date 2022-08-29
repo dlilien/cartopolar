@@ -13,12 +13,21 @@ Setup plots as desired for Greenland.
 import numpy as np
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
-from .cartopy_overrides import NPS, CAN
+from .cartopy_overrides import NPS, CAN, CANART
 import shapely.geometry as sgeom
 
-AXEL_HEIBERG_EXTENT = (-948000.000, -700000.000, -935000.000, -600000.000)
+AXEL_HEIBERG_EXTENT = (-948000.000, -680000.000, -935000.000, -600000.000)
+AXEL_HEIBERG_UTM_EXTENT = (200000.0, 800000.0, 7730000.0, 9300000.0)
+AXEL_HEIBERG_CAN_EXTENT = (6100000, 6350000, 4600000, 5000000)
+AXEL_HEIBERG_TIGHT_CAN_EXTENT = (6120000, 6295000, 4620000, 4895000)
+
 MUELLER_NPS_EXTENT = (-830000.000, -750000.000, -800000.000, -710000.000)
+MUELLER_TIGHT_NPS_EXTENT = (-810000.000, -770000.000, -780000.000, -730000.000)
+MUELLER_UTM_EXTENT = (500000.0, 560000.0, 8830000.0, 8900000.0)
 MUELLER_EXTENT = (500000.0, 560000.0, 8830000.0, 8900000.0)
+MUELLER_CAN_EXTENT = (6181000, 6251000, 4775000, 4860000)
+
+CAN_EXTENT = (3000000, 9000000, 1000000, 5300000)
 
 
 
@@ -30,6 +39,45 @@ def heiberg(ax=None, fig_kwargs=None):
     ax.set_extent(AXEL_HEIBERG_EXTENT, ccrs.epsg(3413))
     ax._xlocs = [-75, -60, -45, -30, -15]
     ax._ylocs = [60, 65, 70, 75, 80]
+    ax._y_inline = False
+    ax._x_inline = False
+    return ax
+
+
+def heiberg_UTM(ax=None, fig_kwargs=None):
+    if fig_kwargs is None:
+        fig_kwargs = {}
+    if ax is None:
+        _, ax = plt.subplots(**fig_kwargs, subplot_kw={'projection': CANART()})
+    ax.set_extent(AXEL_HEIBERG_UTM_EXTENT, CANART())
+    ax._xlocs = [-75, -60, -45, -30, -15]
+    ax._ylocs = [60, 65, 70, 75, 80]
+    ax._y_inline = False
+    ax._x_inline = False
+    return ax
+
+
+def heiberg_CAN(ax=None, fig_kwargs=None):
+    if fig_kwargs is None:
+        fig_kwargs = {}
+    if ax is None:
+        _, ax = plt.subplots(**fig_kwargs, subplot_kw={'projection': CAN()})
+    ax.set_extent(AXEL_HEIBERG_CAN_EXTENT, CAN())
+    ax._xlocs = np.arange(-120, -60, 5)
+    ax._ylocs = np.arange(60, 85, 1)
+    ax._y_inline = False
+    ax._x_inline = False
+    return ax
+
+
+def tight_heiberg_CAN(ax=None, fig_kwargs=None):
+    if fig_kwargs is None:
+        fig_kwargs = {}
+    if ax is None:
+        _, ax = plt.subplots(**fig_kwargs, subplot_kw={'projection': CAN()})
+    ax.set_extent(AXEL_HEIBERG_TIGHT_CAN_EXTENT, CAN())
+    ax._xlocs = np.arange(-120, -60, 5)
+    ax._ylocs = np.arange(60, 85, 1)
     ax._y_inline = False
     ax._x_inline = False
     return ax
@@ -48,12 +96,38 @@ def mueller_nps(ax=None, fig_kwargs=None):
     return ax
 
 
+def mueller_tight_nps(ax=None, fig_kwargs=None):
+    if fig_kwargs is None:
+        fig_kwargs = {}
+    if ax is None:
+        _, ax = plt.subplots(**fig_kwargs, subplot_kw={'projection': NPS()})
+    ax.set_extent(MUELLER_TIGHT_NPS_EXTENT, ccrs.epsg(3413))
+    ax._xlocs = np.arange(-180, 180, 1.0)
+    ax._ylocs = np.arange(-180, 180, 1.0 / 3.0)
+    ax._y_inline = False
+    ax._x_inline = False
+    return ax
+
+
+def mueller_utm_map(ax=None, fig_kwargs=None):
+    if fig_kwargs is None:
+        fig_kwargs = {}
+    if ax is None:
+        _, ax = plt.subplots(**fig_kwargs, subplot_kw={'projection': CAN()})
+    ax.set_extent(MUELLER_UTM_EXTENT, CAN())
+    ax._xlocs = np.arange(-180, 180, 1.0)
+    ax._ylocs = np.arange(-180, 180, 1.0 / 3.0)
+    ax._y_inline = False
+    ax._x_inline = False
+    return ax
+
+
 def mueller_map(ax=None, fig_kwargs=None):
     if fig_kwargs is None:
         fig_kwargs = {}
     if ax is None:
         _, ax = plt.subplots(**fig_kwargs, subplot_kw={'projection': CAN()})
-    ax.set_extent(MUELLER_EXTENT, CAN())
+    ax.set_extent(MUELLER_CAN_EXTENT, CAN())
     ax._xlocs = np.arange(-180, 180, 1.0)
     ax._ylocs = np.arange(-180, 180, 1.0 / 3.0)
     ax._y_inline = False
